@@ -1,5 +1,8 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:perplexed/services/chat_web_service.dart';
 import 'package:perplexed/theme/colors.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import 'package:url_launcher/link.dart';
 
 class SourcesSection extends StatefulWidget {
   const new({super.key});
@@ -9,11 +12,23 @@ class SourcesSection extends StatefulWidget {
 }
 
 class _SourcesSectionState extends State<SourcesSection> {
-  List<Map<String, dynamic>> searchResults = [
+  bool isLoading = true;
+  List searchResults = [
     {'title': 'Google', 'url': 'https://google.com'},
     {'title': 'YouTube', 'url': 'https://youtube.com'},
     {'title': 'Facebook', 'url': 'https://facebook.com'},
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    ChatWebService().searchResultStream.listen((data) {
+      setState(() {
+        searchResults = data['data'];
+        isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,39 +46,57 @@ class _SourcesSectionState extends State<SourcesSection> {
           ],
         ),
         const SizedBox(height: 16),
-        Wrap(
-          spacing: 16,
-          runSpacing: 16,
-          children: searchResults.map((res) {
-            return Container(
-              width: 150,
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.cardColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    res['title'],
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    res['url'],
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
+        Skeletonizer(
+          enabled: isLoading,
+          child: Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: searchResults.map((res) {
+              return Container(
+                width: 150,
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.cardColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      res['title'],
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Link(
+                      uri: Uri.parse(res['url']),
+                      target: LinkTarget.blank,
+                      builder: (context, followLink) => MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          onTap: followLink,
+                          child: Text(
+                            res['url'],
+                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
         ),
       ],
     );
   }
 }
+/*
+architecture
+
+-> 
+*/

@@ -1,6 +1,5 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:perplexed/pages/chat_page.dart';
 import 'package:perplexed/pages/home_page.dart';
 import 'package:perplexed/theme/colors.dart';
 
@@ -27,7 +26,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const ChatPage(question: 'What is TT'),
+      home: const HomePage(),
     );
   }
 }
