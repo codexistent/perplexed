@@ -27,9 +27,14 @@ async def find_sources(query: str):
 def public(sources):
     return [{"title": s["title"], "url": s["url"]} for s in sources]
 
+ALLOWED_ORIGINS = {"https://perplexed.onrender.com", "http://localhost:5000"}
+
 # websocket
 @app.websocket("/ws/chat")
 async def websocket_chat_endpoint(websocket: WebSocket):
+    if websocket.headers.get("origin") not in ALLOWED_ORIGINS:
+        await websocket.close(code=1008) # 1008 = policy violation
+        return
     # accept connection request
     await websocket.accept()
 
