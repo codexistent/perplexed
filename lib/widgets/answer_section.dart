@@ -3,6 +3,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:perplexed/services/chat_web_service.dart';
 import 'package:perplexed/theme/markdown_style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AnswerSection extends StatefulWidget {
   const new({super.key});
@@ -44,7 +45,7 @@ lorem ipsum dolor sit amet consectetur adipiscing elit est cupidatat nihil excep
       children: [
         const SizedBox(height: 24),
         Text(
-          'Perplexity',
+          'Perplexed',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
 
@@ -54,6 +55,14 @@ lorem ipsum dolor sit amet consectetur adipiscing elit est cupidatat nihil excep
             data: fullResponse,
             shrinkWrap: true,
             styleSheet: AppMarkdownStyle.sheet,
+            onTapLink: (text, href, title) {
+              if (href != null) {
+                launchUrl(
+                  Uri.parse(href),
+                  mode: LaunchMode.externalApplication,
+                );
+              }
+            },
           ),
         ),
       ],

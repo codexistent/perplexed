@@ -41,7 +41,7 @@ which literally represents the $\cos$ of the angle between the two vectors. This
 
 # V1.0 Development Documentation
 
-When building perplexed, we used the following tools and languages:
+We used the following tools and languages to build Perplexed:
 
 - The language **Dart**
 - **Flutter** as our frontend framework

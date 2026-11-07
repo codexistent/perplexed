@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:perplexed/pages/home_page.dart';
 import 'package:perplexed/theme/colors.dart';
 
 class SideBarButton extends StatelessWidget {
@@ -14,22 +15,29 @@ class SideBarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: isCollapsed
-          ? MainAxisAlignment.center
-          : MainAxisAlignment.start,
-      children: [
-        Container(
-          margin: EdgeInsets.symmetric(vertical: 14, horizontal: 10),
-          child: Icon(icon, color: AppColors.iconGrey, size: 22),
-        ),
-        isCollapsed
-            ? const SizedBox()
-            : Text(
-                buttonText,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-      ],
+    return GestureDetector(
+      onTap: () => {
+        if (buttonText == "Home" || buttonText == "Search")
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => HomePage())),
+      },
+      child: Row(
+        mainAxisAlignment: isCollapsed
+            ? MainAxisAlignment.center
+            : MainAxisAlignment.start,
+        children: [
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+            child: Icon(icon, color: AppColors.iconGrey, size: 22),
+          ),
+          isCollapsed
+              ? const SizedBox()
+              : Text(
+                  buttonText,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+        ],
+      ),
     );
   }
 }
