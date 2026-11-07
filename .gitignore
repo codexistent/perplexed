@@ -54,4 +54,4 @@ app.*.map.json
 *__pycache__/
 
 # include example env file
-*!.env.example
+!.env.example

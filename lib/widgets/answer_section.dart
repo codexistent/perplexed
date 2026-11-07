@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:perplexed/services/chat_web_service.dart';
+import 'package:perplexed/theme/markdown_style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -80,6 +81,7 @@ lorem ipsum dolor sit amet consectetur adipiscing elit est cupidatat nihil excep
         Skeletonizer(
           enabled: isLoading,
           child: MarkdownBody(
+            styleSheet: AppMarkdownStyle.sheet,
             data: fullResponse,
             shrinkWrap: true,
             onTapLink: (text, href, title) {

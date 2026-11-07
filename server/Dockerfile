@@ -1,4 +1,4 @@
-FROM python:3.14.0
+FROM python:3.14-slim
 WORKDIR /app
 ENV PIP_NO_CACHE_DIR=1
 

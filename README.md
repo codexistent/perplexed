@@ -51,6 +51,7 @@ We used the following tools and languages to build Perplexed:
 - **SentenceTransformers** for their embedding models
 - **Gemini AI Studio** for its API
 - **Flutter Markdown**, a package for displaying our AI-powered outputs in md
+- **Render** for deployment
 
 During local development, we used a Python virtual environment to isolate our project dependencies. To install it for our project, we ran `python3 -m venv venv` under our `/server` directory and activated it via terminal with `./venv/Scripts/Activate.ps1`.
 

@@ -60,7 +60,7 @@ async def websocket_chat_endpoint(websocket: WebSocket):
                 raise 
             except Exception:
                 # log the real error
-                logger.exception("chat failed for query=$r", query)
+                logger.exception("chat failed for query=%r", query)
                 await websocket.send_json(
                     {"type": "error", "data": "Something went wrong. Please try again."}
                 )

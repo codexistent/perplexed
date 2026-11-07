@@ -6,7 +6,7 @@ import 'package:web_socket_client/web_socket_client.dart';
 class ChatWebService {
   static final _instance = ChatWebService._internal();
 
-  // set at build time: --dart-define=WS_URL=wss://fastapi/ws-chat
+  // set at build time: --dart-define=WS_URL=wss://fastapi/ws/chat
   static const _wsUrl = String.fromEnvironment(
     'WS_URL',
     defaultValue: 'ws://localhost:8000/ws/chat',

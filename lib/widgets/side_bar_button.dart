@@ -1,5 +1,4 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:perplexed/pages/home_page.dart';
 import 'package:perplexed/pages/spaces_page.dart';
 import 'package:perplexed/theme/colors.dart';
 
@@ -17,13 +16,16 @@ class SideBarButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => {
-        if (buttonText == "Home" || buttonText == "Search")
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => HomePage())),
-        if (buttonText == "Spaces")
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => SpacesPage())),
+      onTap: () {
+        final nav = Navigator.of(context);
+        if (buttonText == "Home" || buttonText == "Search") {
+          // navigate to home page
+          nav.popUntil((route) => route.isFirst);
+        }
+        if (buttonText == "Spaces") {
+          nav.popUntil((route) => route.isFirst);
+          nav.push(MaterialPageRoute(builder: (_) => const SpacesPage()));
+        }
       },
       child: Row(
         mainAxisAlignment: isCollapsed
