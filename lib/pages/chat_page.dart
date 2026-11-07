@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:perplexed/theme/colors.dart';
 import 'package:perplexed/widgets/answer_section.dart';
@@ -13,8 +14,8 @@ class ChatPage extends StatelessWidget {
     return Scaffold(
       body: Row(
         children: [
-          SideBar(),
-          const SizedBox(width: 100),
+          kIsWeb ? SideBar() : SizedBox(),
+          const SizedBox(width: kIsWeb ? 100 : 0),
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
@@ -42,7 +43,9 @@ class ChatPage extends StatelessWidget {
               ),
             ),
           ),
-          Placeholder(strokeWidth: 0, color: AppColors.background),
+          kIsWeb
+              ? Placeholder(strokeWidth: 0, color: AppColors.background)
+              : SizedBox(),
         ],
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:perplexed/services/chat_web_service.dart';
 import 'package:perplexed/widgets/footer_link.dart';
@@ -25,28 +26,31 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Row(
         children: [
-          SideBar(),
+          kIsWeb ? SideBar() : SizedBox(),
 
           Expanded(
-            child: Column(
-              children: [
-                Expanded(child: SearchSection()),
+            child: Padding(
+              padding: kIsWeb ? EdgeInsets.all(8.0) : EdgeInsets.zero,
+              child: Column(
+                children: [
+                  Expanded(child: SearchSection()),
 
-                // footer
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    children: [
-                      FooterLink(footerText: "Pro"),
-                      FooterLink(footerText: "Store"),
-                      FooterLink(footerText: "Blog"),
-                      FooterLink(footerText: "Careers"),
-                      FooterLink(footerText: "English (English)"),
-                    ],
+                  // footer
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      children: [
+                        FooterLink(footerText: "Pro"),
+                        FooterLink(footerText: "Store"),
+                        FooterLink(footerText: "Blog"),
+                        FooterLink(footerText: "Careers"),
+                        FooterLink(footerText: "English (English)"),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
