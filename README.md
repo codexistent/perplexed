@@ -50,6 +50,7 @@ When building perplexed, we used the following tools and languages:
 - **Trafilatura** package to scrape web pages
 - **SentenceTransformers** for their embedding models
 - **Gemini AI Studio** for its API
+- **Flutter Markdown**, a package for displaying our AI-powered outputs in md
 
 During local development, we used a Python virtual environment to isolate our project dependencies. To install it for our project, we ran `python3 -m venv venv` under our `/server` directory and activated it via terminal with `./venv/Scripts/Activate.ps1`.
 
@@ -109,3 +110,13 @@ To test our websocket, we used PieHost: https://piehost.com/websocket-tester
 Our client connects to the backend via websocket at `chat_web_service.dart`'s `ChatWebService` function.
 
 Frontend pages/components then rely on a `StreamController` (which manages the messages from the websocket so that widgets can receive them as they arrive) which is connection with `ChatWebService`. It is important here to make sure we only ever have one `ChatWebService` object so we dont loose information, and for this we use a singleton.
+
+## Part 4: Chat UI
+
+Our chat page simply consists of the same navbar on the left hand side, with the main content of the page consisting of a 3-part column: header, source cards, and content. Its code lays in `chat_page.dart`.
+
+The header is simply a text element. The source cards section widget `sources_section.dart` is a row of simple two-element columns consisting of a text element and a link. Finally, the content section `answer_section.dart` is rendered as a markdown file for better readability with the help of the `flutter_markdown` package.
+
+All three parts are their own widgets such that they are only loaded when data relevant to what they are displaying, and not other data, is changed.
+
+![chat ui draw up](docs/media/chatui.png)
