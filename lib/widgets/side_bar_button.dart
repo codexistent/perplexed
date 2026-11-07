@@ -1,4 +1,6 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:perplexed/pages/discover_page.dart';
+import 'package:perplexed/pages/library_page.dart';
 import 'package:perplexed/pages/spaces_page.dart';
 import 'package:perplexed/theme/colors.dart';
 
@@ -25,6 +27,14 @@ class SideBarButton extends StatelessWidget {
         if (buttonText == "Spaces") {
           nav.popUntil((route) => route.isFirst);
           nav.push(MaterialPageRoute(builder: (_) => const SpacesPage()));
+        }
+        if (buttonText == "Library") {
+          nav.popUntil((route) => route.isFirst);
+          nav.push(MaterialPageRoute(builder: (_) => const LibraryPage()));
+        }
+        if (buttonText == "Discover") {
+          nav.popUntil((route) => route.isFirst);
+          nav.push(MaterialPageRoute(builder: (_) => const DiscoverPage()));
         }
       },
       child: Row(

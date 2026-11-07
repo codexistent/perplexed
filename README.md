@@ -1,6 +1,6 @@
-Perplexed is an AI-powered search engine based on the popular application Perplexity.
-
 # Perplexed
+
+Perplexed is an AI-powered search engine based on the popular application Perplexity.
 
 # Background
 
@@ -131,3 +131,4 @@ In version 1.1, we implemented the following new functionalities and bug fixes:
 - Enable multiple searches simultaneously (implemented in branch `multiple-searches`). Currently, our web socket only handles a single search.
 - In `main.py`, add error catching/logging for if anything in the websocket streaming process went wrong
 - Stop listening to websocket when page closes. Currently the widget starts listening in `initState` but never stops. After leaving a chat page, its old listener keeps calling `setState` on a widget that's gone which results in errors.
+- Abstract the sidebar and content section into a `AppShell` widget. Then instead of repeating some code for the layout of our pages as we currently do, we can now simply add an `AppShell` and pass in page-specific content.

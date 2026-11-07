@@ -22,10 +22,11 @@ class _SideBarState extends State<SideBar> {
       child: Column(
         children: [
           const SizedBox(height: 16),
-          Icon(
-            Icons.auto_awesome_mosaic,
-            color: AppColors.whiteColor,
-            size: isCollapsed ? 30 : 60,
+          Image.asset(
+            'assets/logo.png',
+            width: isCollapsed ? 30 : 60,
+            height: isCollapsed ? 30 : 60,
+            fit: BoxFit.contain,
           ),
           Expanded(
             child: Column(
