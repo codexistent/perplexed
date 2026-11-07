@@ -4,7 +4,7 @@ Perplexed is an AI-powered search engine based on the popular application Perple
 
 # Background
 
-In building Perplexed, there were a few key background concepts critical to building it.
+In building Perplexed, there were a few key background concepts critical in understanding before we built it.
 
 ## Vectorization/Embedding
 
@@ -53,6 +53,8 @@ We used the following tools and languages to build Perplexed:
 - **Flutter Markdown**, a package for displaying our AI-powered outputs in md
 
 During local development, we used a Python virtual environment to isolate our project dependencies. To install it for our project, we ran `python3 -m venv venv` under our `/server` directory and activated it via terminal with `./venv/Scripts/Activate.ps1`.
+
+Version 1.0 of our app primarily referenced and built on this tutorial: https://www.youtube.com/watch?v=iNJ7z4YLQFk&t=1066s. Version 1.1's implementation was independent of the tutorial. Our documentation comes from a combination of what was covered in the video and my own explanations & considerations. Regarding AI usage - Claude Code was used in minimal instances for debugging purposes, and those are documented below.
 
 ## Part 1: Homepage UI
 
@@ -115,8 +117,16 @@ Frontend pages/components then rely on a `StreamController` (which manages the m
 
 Our chat page simply consists of the same navbar on the left hand side, with the main content of the page consisting of a 3-part column: header, source cards, and content. Its code lays in `chat_page.dart`.
 
-The header is simply a text element. The source cards section widget `sources_section.dart` is a row of simple two-element columns consisting of a text element and a link. Finally, the content section `answer_section.dart` is rendered as a markdown file for better readability with the help of the `flutter_markdown` package.
+The header is simply a text element. The source cards section widget `sources_section.dart` is a row of simple two-element columns consisting of a text element and a clickable link (initially, the `url_launcher` package wasn't working, but we used Claude Code to successfully debug this). Finally, the content section `answer_section.dart` is rendered as a markdown file for better readability with the help of the `flutter_markdown` package.
 
 All three parts are their own widgets such that they are only loaded when data relevant to what they are displaying, and not other data, is changed. Due to this data loading, all three widgets are stateful and retrieve data by accessing `ChatWebService().searchResultStream` and editing state as data comes in. While data is loading, we add a shimmer effect to the place where content is to appear using the `skeletonizer` package.
 
 ![chat ui draw up](docs/media/chatui.png)
+
+# V1.1
+
+In version 1.1, we implemented the following new functionalities and bug fixes:
+
+- Enable multiple searches simultaneously (implemented in branch `multiple-searches`). Currently, our web socket only handles a single search.
+- In `main.py`, add error catching/logging for if anything in the websocket streaming process went wrong
+- Stop listening to websocket when page closes. Currently the widget starts listening in `initState` but never stops. After leaving a chat page, its old listener keeps calling `setState` on a widget that's gone which results in errors.

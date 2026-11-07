@@ -4,6 +4,8 @@ import 'package:perplexed/theme/colors.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'dart:async';
+
 class SourcesSection extends StatefulWidget {
   const new({super.key});
 
@@ -13,6 +15,7 @@ class SourcesSection extends StatefulWidget {
 
 class _SourcesSectionState extends State<SourcesSection> {
   bool isLoading = true;
+  final _subs = <StreamSubscription>[];
   List searchResults = [
     {'title': 'Google', 'url': 'https://google.com'},
     {'title': 'YouTube', 'url': 'https://youtube.com'},
@@ -22,12 +25,33 @@ class _SourcesSectionState extends State<SourcesSection> {
   @override
   void initState() {
     super.initState();
-    ChatWebService().searchResultStream.listen((data) {
-      setState(() {
-        searchResults = data['data'];
-        isLoading = false;
-      });
-    });
+    final chat = ChatWebService();
+    _subs.add(
+      chat.searchResultStream.listen((data) {
+        if (!mounted) return;
+        setState(() {
+          searchResults = data['data'] as List;
+          isLoading = false;
+        });
+      }),
+    );
+    _subs.add(
+      chat.statusStream.listen((data) {
+        if (!mounted || data['type'] != 'error') return;
+        setState(() {
+          searchResults = [];
+          isLoading = false;
+        });
+      }),
+    );
+  }
+
+  @override
+  void dispose() {
+    for (final s in _subs) {
+      s.cancel();
+    }
+    super.dispose();
   }
 
   @override

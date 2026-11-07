@@ -1,9 +1,15 @@
-from fastapi import FastAPI, WebSocket 
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.concurrency import iterate_in_threadpool
+
 from pydantic_models.chat_body import ChatBody
 from services.search_service import SearchService
 from services.sort_source_service import SortSourceService
 from services.llm_service import LLMService
+
 import asyncio
+import logging
+
+logger = logging.getLogger("perplexed")
 
 # instantiate FastAPI in project
 app = FastAPI() 
@@ -12,6 +18,15 @@ search_service = SearchService()
 sort_source_service = SortSourceService()
 llm_service = LLMService()
 
+# search + rank in worker thread so other users aren't blocked
+async def find_sources(query: str):
+    results = await asyncio.to_thread(search_service.web_search, query)
+    return await asyncio.to_thread(sort_source_service.sort_sources, queery, results)
+
+# just share title + url to client; full page text not needed
+def public(sources):
+    return [{"title": s["title"], "url": s["url"]} for s in sources]
+
 # websocket
 @app.websocket("/ws/chat")
 async def websocket_chat_endpoint(websocket: WebSocket):
@@ -19,45 +34,51 @@ async def websocket_chat_endpoint(websocket: WebSocket):
     await websocket.accept()
 
     try: 
-        await asyncio.sleep(0.1)
-        data = await websocket.receive_json()
-        query = data.get("query")
+        # one socket, multiple queries
+        while True: 
+            data = await websocket.receive_json()
+            query = (data.get("query") or "").strip()
 
-        # 1. search web and find appropriate sources
-        search_results = search_service.web_search(query);
+            if not query:
+                await websocket.send_json({"type":"error", "data":"Empty query"})
 
-        # 2. sort sources based on relevancy 
-        sorted_results = sort_source_service.sort_sources(query, search_results)
-        await asyncio.sleep(0.1)
+                continue
 
-        # 3. inform user web search and sort is done
-        await websocket.send_json({
-            "type": "search_result",
-            "data": sorted_results
-        })
+            try:
+                sources = await find_sources(query)
+                await websocket.send_json({"type": "search_result", "data": public(sources)})
 
-        # 4. stream llm response in chunks over websocket connection
-        for chunk in llm_service.generate_response(query, sorted_results):
-            await asyncio.sleep(0.1)
-            await websocket.send_json({
-                'type': 'content',
-                'data': chunk
-            })
-    except:
-        print("Unexpected error occurred")
-    finally:
-        await websocket.close()
+                # stream AI response from worker thread
+                async for chunk in iterate_in_threadpool(
+                    llm_service.generate_response(query, sources)
+                ):
+                    await websocket.send_json({"type": "content", "data": chunk})
+                
+                await websocket.send_json({"type": "done"})
+
+            except WebSocketDisconnect:
+                raise 
+            except Exception:
+                # log the real error
+                logger.exception("chat failed for query=$r", query)
+                await websocket.send_json(
+                    {"type": "error", "data": "Something went wrong. Please try again."}
+                )
+    except WebSocketDisconnect:
+        pass
 
 # chat
 @app.post("/chat")
-def chat_endpoint(body: ChatBody):
-    # 1. search web and find appropriate sources
-    search_results = search_service.web_search(body.query);
+async def chat_endpoint(body: ChatBody):
+    sources = await find_sources(body.query)
 
-    # 2. sort sources based on relevancy 
-    sorted_results = sort_source_service.sort_sources(body.query, search_results)
+    answer = await asyncio.to_thread(
+        lambda: "".join(llm_service.generate_response(body.query, sources))
+    )
 
-    # 3. generate response using llm
-    response = llm_service.generate_response(body.query, sorted_results)
+    return {"sources": public(sources), "answer": answer}
 
-    return response
+# for deployment host's health check
+@app.get("/health")
+def health():
+    return {"ok": True}

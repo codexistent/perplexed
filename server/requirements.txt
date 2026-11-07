@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+pydantic-settings
+python-dotenv
+tavily-python
+sentence-transformers
+numpy
+google-generativeai
+trafilatura
