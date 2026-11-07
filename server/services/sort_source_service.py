@@ -14,7 +14,7 @@ class SortSourceService:
         doc_embeddings = self.embedding_model.encode([r["content"] for r in search_results])
 
         similarities = doc_embeddings @ query_embedding / (
-            np.linalg.norm(query_embedding) * np.linalg.norm(query_embedding)
+            np.linalg.norm(doc_embeddings, axis=1) * np.linalg.norm(query_embedding)
         )
 
         relevant_docs = []
