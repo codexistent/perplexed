@@ -68,9 +68,9 @@ Then `home_page.dart` simply contains one `SideBar` widget and a column with a `
 
 ![search page ui](docs/media/searchpageui.png)
 
-### Part 2: Server
+### Part 2: Process Results
 
-A huge chunk of Perplex's backend is our server, which contains our API that talks to the AI models to enable the core functionality of an 'AI powered' search engine. For this, we used the python-based framework FastAPI which is dependent on Uvicorn as the actual web server.
+A huge chunk of Perplex's backend is AI-processing the user prompt in our server, where our API talks to various models to enable the core functionality of an 'AI powered' search engine. For this, we used the python-based framework FastAPI which is dependent on Uvicorn as the actual web server.
 
 Our server, of which the most important function is `chat_endpoint` that takes in a user's query to output a result, has three services which the latter uses in sequence.
 
@@ -82,12 +82,12 @@ There are two primary approaches we considered for getting results from the web.
 
 After getting sources, we also wanted to get the content of the webpages too instead of simply the URLs themselves. So we scrape the URLs as well, using `Trafilatura`. This portion of `search_service.py` could technically be broken into a separate step, but we kept it here because the function currently returns the each of the results in elements which contain the url, title, and content of pages bundled into one.
 
-### Sorting Service
+#### Sorting Service
 
 Covered in the Background section above.
 
-We sort the list of results we get from `SearchService` by non-decreasing similarity to the user's prompt.
+In `sorting_service.py`, we sort the list of results we get from `SearchService` by non-decreasing similarity to the user's prompt.
 
-### LLM Service
+#### LLM Service
 
-Generate the final output/response using the Gemini API.
+`llm_service.py` generates the final output using the Gemini API based on the sorted list of results from the service above.
