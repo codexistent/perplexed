@@ -68,13 +68,13 @@ Then `home_page.dart` simply contains one `SideBar` widget and a column with a `
 
 ![search page ui](docs/media/searchpageui.png)
 
-### Part 2: Process Results
+## Part 2: Process Results
 
 A huge chunk of Perplex's backend is AI-processing the user prompt in our server, where our API talks to various models to enable the core functionality of an 'AI powered' search engine. For this, we used the python-based framework FastAPI which is dependent on Uvicorn as the actual web server.
 
-Our server, of which the most important function is `chat_endpoint` that takes in a user's query to output a result, has three services which the latter uses in sequence.
+Our server has three main services which `main.py`'s `chat_endpoint` (that takes in a user's query to output a result) uses in sequence.
 
-#### Search Service
+### Search Service
 
 `search_service.py` takes in the query and outputs info/sources from the web.
 
@@ -82,12 +82,20 @@ There are two primary approaches we considered for getting results from the web.
 
 After getting sources, we also wanted to get the content of the webpages too instead of simply the URLs themselves. So we scrape the URLs as well, using `Trafilatura`. This portion of `search_service.py` could technically be broken into a separate step, but we kept it here because the function currently returns the each of the results in elements which contain the url, title, and content of pages bundled into one.
 
-#### Sorting Service
+### Sorting Service
 
 Covered in the Background section above.
 
 In `sorting_service.py`, we sort the list of results we get from `SearchService` by non-decreasing similarity to the user's prompt.
 
-#### LLM Service
+### LLM Service
 
 `llm_service.py` generates the final output using the Gemini API based on the sorted list of results from the service above.
+
+## Part 3: Live Results Streaming
+
+The vast majority of chatbots today show the result of their AI outputs live. So while we have implemented converting our user's input to AI-processed results, we would like to stream these live. To this end, we will enable a websocket connection by editing two files: `main.py` and `llm_service.py`.
+
+We initiate this connection in `main.py` using FastAPI. Then in the new function `websocket_chat_endpoint`, instead of jumping right to the LLM service after completing the search and sorting services, we will first inform the client that our search + sort is complete. Then we chunk the llm's response in `LLMService.generate_response` and pass them to `websocket_chat_endpoint` as we receive them instead of all at once at the very end (to accomplish this we use `yield` when returning our output chunks instead of `return`, which clearly exits from the function).
+
+To test our websocket, we used PieHost: https://piehost.com/websocket-tester

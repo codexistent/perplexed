@@ -14,9 +14,9 @@ class SortSourceService:
             res_embedding = self.embedding_model.encode(res['content'])
 
             # calculate similarity using cos function via numpy
-            similarity = np.dot(query_embedding, res_embedding)/(
+            similarity = float(np.dot(query_embedding, res_embedding)/(
                 np.linalg.norm(query_embedding) * np.linalg.norm(res_embedding)
-            )
+            ))
 
             res['relevance_score'] = similarity
 
