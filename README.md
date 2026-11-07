@@ -111,12 +111,12 @@ Our client connects to the backend via websocket at `chat_web_service.dart`'s `C
 
 Frontend pages/components then rely on a `StreamController` (which manages the messages from the websocket so that widgets can receive them as they arrive) which is connection with `ChatWebService`. It is important here to make sure we only ever have one `ChatWebService` object so we dont loose information, and for this we use a singleton.
 
-## Part 4: Chat UI
+## Part 4: Chat Page
 
 Our chat page simply consists of the same navbar on the left hand side, with the main content of the page consisting of a 3-part column: header, source cards, and content. Its code lays in `chat_page.dart`.
 
 The header is simply a text element. The source cards section widget `sources_section.dart` is a row of simple two-element columns consisting of a text element and a link. Finally, the content section `answer_section.dart` is rendered as a markdown file for better readability with the help of the `flutter_markdown` package.
 
-All three parts are their own widgets such that they are only loaded when data relevant to what they are displaying, and not other data, is changed.
+All three parts are their own widgets such that they are only loaded when data relevant to what they are displaying, and not other data, is changed. Due to this data loading, all three widgets are stateful and retrieve data by accessing `ChatWebService().searchResultStream` and editing state as data comes in. While data is loading, we add a shimmer effect to the place where content is to appear using the `skeletonizer` package.
 
 ![chat ui draw up](docs/media/chatui.png)
