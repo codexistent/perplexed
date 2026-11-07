@@ -27,7 +27,7 @@ async def find_sources(query: str):
 def public(sources):
     return [{"title": s["title"], "url": s["url"]} for s in sources]
 
-ALLOWED_ORIGINS = {"https://perplexed-topaz.vercel.app/", "http://localhost:5000"}
+ALLOWED_ORIGINS = {"https://perplexed-topaz.vercel.app", "http://localhost:5000"}
 
 # websocket
 @app.websocket("/ws/chat")
