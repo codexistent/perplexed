@@ -48,4 +48,10 @@ app.*.map.json
 .widget_preview/
 
 # env files
-.env
+*.env 
+*.env.*
+**/venv/
+*__pycache__/
+
+# include example env file
+*!.env.example

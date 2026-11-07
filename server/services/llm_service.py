@@ -32,10 +32,18 @@ class LLMService:
         Query: {query}
 
         Please provide a comprehensive, detailed, well-cited, and accurate response using the above context. Think and reason deeply. Ensure it answers the query the user is asking. Do not use your knowledge until it is absolutely neccesary.
+
+        Cite every source as a markdown link, like [title](url).
         """
 
         response = self.model.generate_content(full_prompt, stream=True)
 
         # chunk the response so it can be streamed live
         for chunk in response:
-            yield chunk.text
+            try:
+                text = chunk.text 
+            except ValueError:
+                continue 
+                
+            if text: 
+                yield text

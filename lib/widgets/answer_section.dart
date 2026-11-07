@@ -1,9 +1,10 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:perplexed/services/chat_web_service.dart';
-import 'package:perplexed/theme/markdown_style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'dart:async';
 
 class AnswerSection extends StatefulWidget {
   const new({super.key});
@@ -14,28 +15,55 @@ class AnswerSection extends StatefulWidget {
 
 class _AnswerSectionState extends State<AnswerSection> {
   bool isLoading = true;
+  final _subs = <StreamSubscription>[];
   String fullResponse = '''
-lorem ipsum dolor sit amet consectetur adipiscing elit est cupidatat nihil excepteur ea ducimus praesentium similique aliquip voluptatum rerum distinctio id distinctio fuga veniam qui officia exercitation corrupti ducimus cupiditate sed possimus omnis quo similique dolore officia nobis cumque quidem provident et expedita non vel esse ea imperdiet facilis nulla
+This is an example/placeholder response. You can put anything here, such as:
+- avocadoes
+- oranges
+- mongoes
+- potatoes
 
-lorem ipsum dolor sit amet consectetur adipiscing elit est cupidatat nihil excepteur ea ducimus praesentium similique aliquip voluptatum rerum distinctio id distinctio fuga veniam qui officia exercitation corrupti ducimus cupiditate sed possimus omnis quo similique dolore officia nobis cumque quidem provident et expedita non vel esse ea imperdiet facilis nulla
+and more, such as lorem ipsum dolor sit amet consectetur adipiscing elit est cupidatat nihil.
 
-lorem ipsum dolor sit amet consectetur adipiscing elit est cupidatat nihil excepteur ea ducimus praesentium similique aliquip voluptatum rerum distinctio id distinctio fuga veniam qui officia exercitation corrupti ducimus cupiditate sed possimus omnis quo similique dolore officia nobis cumque quidem provident et expedita non vel esse ea imperdiet facilis nulla
+lorem ipsum dolor sit amet consectetur adipiscing elit est cupidatat nihil excepteur ea ducimus praesentium similique aliquip voluptatum rerum distinctio id distinctio fuga veniam qui officia exercitation corrupti ducimus cupiditate sed possimus omnis quo similique dolore officia nobis cumque quidem provident et expedita non vel esse ea imperdiet facilis nulla. lorem ipsum dolor sit amet consectetur adipiscing elit est cupidatat nihil excepteur.
 
-lorem ipsum dolor sit amet consectetur adipiscing elit est cupidatat nihil excepteur ea ducimus praesentium similique aliquip voluptatum rerum distinctio id distinctio fuga veniam qui officia exercitation corrupti ducimus cupiditate sed possimus omnis quo similique dolore officia nobis cumque quidem provident et expedita non vel esse ea imperdiet facilis nulla
+lorem ipsum dolor sit amet consectetur adipiscing elit est cupidatat nihil excepteur.
+
+lorem ipsum dolor sit amet consectetur adipiscing elit est cupidatat nihil excepteur ea ducimus praesentium similique aliquip voluptatum rerum distinctio id distinctio fuga veniam.
   ''';
 
   @override
   void initState() {
     super.initState();
-    ChatWebService().contentStream.listen((data) {
-      // clear string on first time
-      if (isLoading) fullResponse = "";
+    final chat = ChatWebService();
+    _subs.add(
+      chat.contentStream.listen((data) {
+        if (!mounted) return;
+        setState(() {
+          if (isLoading) fullResponse = "";
+          fullResponse += data['data'];
+          isLoading = false;
+        });
+      }),
+    );
+    _subs.add(
+      chat.statusStream.listen((data) {
+        if (!mounted || data['type'] != 'error') return;
+        setState(() {
+          fullResponse = data['data'];
 
-      setState(() {
-        fullResponse += data['data'];
-        isLoading = false;
-      });
-    });
+          isLoading = false;
+        });
+      }),
+    );
+  }
+
+  @override
+  void dispose() {
+    for (final s in _subs) {
+      s.cancel();
+    }
+    super.dispose();
   }
 
   @override
@@ -51,10 +79,9 @@ lorem ipsum dolor sit amet consectetur adipiscing elit est cupidatat nihil excep
 
         Skeletonizer(
           enabled: isLoading,
-          child: Markdown(
+          child: MarkdownBody(
             data: fullResponse,
             shrinkWrap: true,
-            styleSheet: AppMarkdownStyle.sheet,
             onTapLink: (text, href, title) {
               if (href != null) {
                 launchUrl(
