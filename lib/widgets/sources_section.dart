@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:perplexed/services/chat_web_service.dart';
 import 'package:perplexed/theme/colors.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SourcesSection extends StatefulWidget {
   const new({super.key});
@@ -69,19 +69,18 @@ class _SourcesSectionState extends State<SourcesSection> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
-                    Link(
-                      uri: Uri.parse(res['url']),
-                      target: LinkTarget.blank,
-                      builder: (context, followLink) => MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: GestureDetector(
-                          onTap: followLink,
-                          child: Text(
-                            res['url'],
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () => launchUrl(
+                          Uri.parse(res['url']),
+                          webOnlyWindowName: '_blank',
+                        ),
+                        child: Text(
+                          res['url'],
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),
