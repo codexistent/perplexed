@@ -94,8 +94,18 @@ In `sorting_service.py`, we sort the list of results we get from `SearchService`
 
 ## Part 3: Live Results Streaming
 
-The vast majority of chatbots today show the result of their AI outputs live. So while we have implemented converting our user's input to AI-processed results, we would like to stream these live. To this end, we will enable a websocket connection by editing two files: `main.py` and `llm_service.py`.
+The vast majority of chatbots today show the result of their AI outputs live. So while we have implemented converting our user's input to AI-processed results, we would like to stream these live.
+
+### Backend
+
+In the backend, we will enable a websocket connection by editing two files: `main.py` and `llm_service.py`.
 
 We initiate this connection in `main.py` using FastAPI. Then in the new function `websocket_chat_endpoint`, instead of jumping right to the LLM service after completing the search and sorting services, we will first inform the client that our search + sort is complete. Then we chunk the llm's response in `LLMService.generate_response` and pass them to `websocket_chat_endpoint` as we receive them instead of all at once at the very end (to accomplish this we use `yield` when returning our output chunks instead of `return`, which clearly exits from the function).
 
 To test our websocket, we used PieHost: https://piehost.com/websocket-tester
+
+### Frontend
+
+Our client connects to the backend via websocket at `chat_web_service.dart`'s `ChatWebService` function.
+
+Frontend pages/components then rely on a `StreamController` (which manages the messages from the websocket so that widgets can receive them as they arrive) which is connection with `ChatWebService`. It is important here to make sure we only ever have one `ChatWebService` object so we dont loose information, and for this we use a singleton.
