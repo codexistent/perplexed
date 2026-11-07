@@ -69,6 +69,14 @@ class _SourcesSectionState extends State<SourcesSection> {
             ),
           ],
         ),
+        if (isLoading)
+          const Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: Text(
+              'Loading results... this may take up to a minute.',
+              style: TextStyle(color: Colors.grey, fontSize: 13),
+            ),
+          ),
         const SizedBox(height: 16),
         Skeletonizer(
           enabled: isLoading,
