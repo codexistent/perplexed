@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:perplexed/pages/chat_page.dart';
 import 'package:perplexed/pages/home_page.dart';
 import 'package:perplexed/theme/colors.dart';
 
@@ -17,9 +18,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: AppColors.background,
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.submitButton),
-        textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+        textTheme: GoogleFonts.interTextTheme(
+          ThemeData.dark().textTheme.copyWith(
+            bodyMedium: const TextStyle(
+              fontSize: 15,
+              color: AppColors.whiteColor,
+            ),
+          ),
+        ),
       ),
-      home: const HomePage(),
+      home: const ChatPage(question: 'What is TT'),
     );
   }
 }
