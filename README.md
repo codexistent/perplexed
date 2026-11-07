@@ -49,7 +49,7 @@ We used the following tools and languages to build Perplexed:
 - **Flutter** as our frontend framework
 - **FastAPI**, a web framework based on Python for building APIs
 - **Tavily**, a third-party api which enables fetching AI-based search results
-- **Trafilatura** package to scrape web pages
+- **Trafilatura** package to scrape web pages (note: this dependency was deleted in V1.1)
 - **SentenceTransformers** for their embedding models
 - **Gemini AI Studio** for its API
 - **Flutter Markdown**, a package for displaying our AI-powered outputs in md
@@ -134,3 +134,7 @@ In version 1.1, we implemented the following new functionalities and bug fixes:
 - In `main.py`, add error catching/logging for if anything in the websocket streaming process went wrong
 - Stop listening to websocket when page closes. Currently the widget starts listening in `initState` but never stops. After leaving a chat page, its old listener keeps calling `setState` on a widget that's gone which results in errors.
 - Abstract the sidebar and content section into a `AppShell` widget. Then instead of repeating some code for the layout of our pages as we currently do, we can now simply add an `AppShell` and pass in page-specific content.
+- Increase search results speed. We implemented the following tweaks under the `perf` branch:
+  - Fetch webpage content via Tavilly instead of scraping the webpages ourselves via `trafilatura`, which takes time.
+  - Batch send the web sources to our vectorization model. The sources are currently being sent one at a time.
+  - Pas a limited number of just the top sources from the web to Gemini for generating the response text.

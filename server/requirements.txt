@@ -6,4 +6,3 @@ tavily-python
 sentence-transformers
 numpy
 google-generativeai
-trafilatura
