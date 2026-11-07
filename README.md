@@ -49,6 +49,7 @@ When building perplexed, we used the following tools and languages:
 - **Tavily**, a third-party api which enables fetching AI-based search results
 - **Trafilatura** package to scrape web pages
 - **SentenceTransformers** for their embedding models
+- **Gemini AI Studio** for its API
 
 During local development, we used a Python virtual environment to isolate our project dependencies. To install it for our project, we ran `python3 -m venv venv` under our `/server` directory and activated it via terminal with `./venv/Scripts/Activate.ps1`.
 
@@ -86,3 +87,7 @@ After getting sources, we also wanted to get the content of the webpages too ins
 Covered in the Background section above.
 
 We sort the list of results we get from `SearchService` by non-decreasing similarity to the user's prompt.
+
+### LLM Service
+
+Generate the final output/response using the Gemini API.

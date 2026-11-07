@@ -15,6 +15,7 @@ class SearchService:
         search_results = response.get("results", [])
 
         # scrapes returned websites for data/content
+        # TODO: concurrently scrape all pages to save time
         for result in search_results:
             downloaded = trafilatura.fetch_url(result.get("url"))
             content = trafilatura.extract(downloaded, include_comments = False) or result.get("content")
