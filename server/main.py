@@ -21,7 +21,7 @@ llm_service = LLMService()
 # search + rank in worker thread so other users aren't blocked
 async def find_sources(query: str):
     results = await asyncio.to_thread(search_service.web_search, query)
-    return await asyncio.to_thread(sort_source_service.sort_sources, queery, results)
+    return await asyncio.to_thread(sort_source_service.sort_sources, query, results)
 
 # just share title + url to client; full page text not needed
 def public(sources):
