@@ -2,6 +2,8 @@
 
 Perplexed is an AI-powered search engine based on the popular application Perplexity.
 
+As of Version 1.1, the app is able to take in a text-based prompt and live stream an AI-generated response based on web results, as well as display a selection of relevant links/sources referenced. The user prompt is currently text-only.
+
 # Background
 
 In building Perplexed, there were a few key background concepts critical in understanding before we built it.
